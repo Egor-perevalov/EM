@@ -221,7 +221,10 @@ def parse(code, pb=False):
 			print()
 		elif "python" in s:
 				res = s.replace("python", "", 1).strip()
-				exec(res)
+				try:
+					exec(res)
+				except Exception as e:
+					print(error("Python", f"Invalid operation: PythonError: {e}"))
 		elif "exit" == s:
 			sys.exit()
 		elif "del" in s:
@@ -246,7 +249,10 @@ def parse(code, pb=False):
 					return
 				if "type" in s:
 					ex = resn[1].replace("type", "").strip()
-					exec(f"{resn[0]} = type({ex})", globals())
+					try:
+						exec(f"{resn[0]} = type({ex})", globals())
+					except:
+						print(error("NotFound", f"{ex} is not defined"))
 					return
 				try:
 					exec(f"{resn[0]} = {resn[1]}", globals())
@@ -275,8 +281,11 @@ def parse(code, pb=False):
 					print(error("NotFound", f"{res} is not defined"))
 			elif "type" in res:
 				res = res.replace("type", "", 1).strip()
-				exec(f"temp = {res}", globals())
-				print(temp, end="")
+				try:
+					exec(f"temp = {res}", globals())
+					print(temp, end="")
+				except:
+					print(error("Run", f"Unable to execute"))
 			else:
 				print(res, end="")
 		else:
