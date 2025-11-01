@@ -31,10 +31,7 @@ Explanation:
 "v": version to hash
 """,
 "print": """Outputting data to the screen.
-print [text]: Print text.
-print num [text]: Calculate and print the text.
-print get [var]: Print the value of a variable.
-print type [expression]: Print expression(func, var, math, ect.)
+print var, str, int, float, list, ect.
 """,
 "indents": """There are no indents in EM!
 if a:
