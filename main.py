@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 l = 10000
 funs = {}
 consts = []
-__version__ = '1.0.0'
+__version__ = '1.1.0'
 __author__ = 'Egor Perevalov'
 __tg__ = "@Htmlhtmljs"
 __emcls__ = "EMCLS(Egor Moon Language Correct Syntatix)\n"
@@ -125,6 +125,23 @@ def parse_s(name, text):
 		if len(ress) == 2:
 			code += f"\"{ress[0]}\": {ress[1]}, "
 	exec(name + "=" + "{" + code + "}", globals())
+def emc(file, path="__emcache__/"):
+	if not os.path.exists(path):
+		os.system(f"mkdir {path}")
+	pf = path + file
+	if os.path.exists(pf):
+		f = open(pf, "rb")
+		fr = f.read()
+		f.close()
+		return fr
+	return False
+def emc_write(code, file, path="__emcache__"):
+	if not os.path.exists(path):
+		os.system(f"mkdir {path}")
+	pf = path + "/" + file
+	f = open(pf, "wb")
+	f.write(code.encode("utf-8"))
+	f.close()
 def parse(code, pb=False):
 	codep = code.strip()
 	codep = codep.replace("%inf", "100000000000000000000000000000", l)
@@ -262,39 +279,20 @@ def parse(code, pb=False):
 					print(error("ZeroDivision", "It is impossible to divide by zero"))
 		elif "print" in s:
 			res = s.replace("print", "", 1).strip()
-			res = res.replace("/n", "\n")
-			if "num" in res:
-				res = res.replace("num", "", 1)
-				numres = num(res)
-				if numres:
-					print(numres, end="")
-			elif "get" in res:
-				res = res.replace("get", "", 1).strip()
-				if res in globals():
-					print(globals()[res], end="")
-				elif "[" in res and "]" in res:  
-					var = res.split("[")[0]
-					key = res.split("[")[1].split("]")[0].strip("'\"")
-					if var in globals():
-						print(globals()[var][key], end="")
-				else:
-					print(error("NotFound", f"{res} is not defined"))
-			elif "type" in res:
-				res = res.replace("type", "", 1).strip()
-				try:
-					exec(f"temp = {res}", globals())
-					print(temp, end="")
-				except:
-					print(error("Run", f"Unable to execute"))
-			else:
-				print(res, end="")
+			try:
+				res = eval(res)
+				print(res)
+			except:
+				print(error("Name", f"{res} is not defined"))
 		else:
 			print(error("NotFound", f"{s} is not defined"))
 class EM:
 	def __init__(self, name=""):
 		self.name = name
 	def call(self):
-		res = open(self.name, "r").readlines()
+		r = open(self.name, "r")
+		res = r.readlines()
+		r.close()
 		for i in range(len(res)):
 			parse(res[i])
 	def repl(self):
